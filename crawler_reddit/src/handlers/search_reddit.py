@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
+from starlette.responses import JSONResponse
 from src.db.database import SessionLocal
 from src.schemas.reddit import SearchRedditInput
 from src.talkers.talkers import Talkers
@@ -19,5 +19,5 @@ def get_db():
 @search_reddit_router.post("/search_reddit")
 async def search_reddit(text_search: SearchRedditInput, db: Session = Depends(get_db)):
     talker = Talkers()
-    resp = await talker.search_reddit(text_search.text_search)
-    pass
+    resp = await talker.search_reddit(text_search.text_search, db=db)
+    return JSONResponse({"first 15 post last week": resp}, status_code=200)
